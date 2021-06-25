@@ -1,20 +1,15 @@
-import React from 'react'
-import {connect} from 'react-redux'
+import React, { useContext } from "react";
+import { Context } from "../Context";
 
-export const Home = props => {
-  const {username} = props
+export const Home = () => {
+  const { randomData } = useContext(Context);
 
-  return(
+  console.log(randomData)
+  return (
     <div>
-      <h3>Welcome, {username}</h3>
+      <h3>Welcome, {randomData}</h3>
     </div>
-  )
-}
+  );
+};
 
-const mapState = state => {
-  return {
-    username: state.auth.username
-  }
-}
-
-export default connect(mapState)(Home)
+export default Home;

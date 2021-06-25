@@ -4,18 +4,16 @@ import "./style.css";
 import { Router } from "react-router-dom";
 import history from "./history";
 import App from "./App";
+import ContextProvider from "./Context";
 
-import { Provider } from "react-redux";
-import store from "./store";
-
-import "core-js/stable"
-import "regenerator-runtime/runtime"
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 
 ReactDOM.render(
-  <Provider store={store}>
+  <ContextProvider>
     <Router history={history}>
       <App />
     </Router>
-  </Provider>,
+  </ContextProvider>,
   document.getElementById("app")
 );
