@@ -4,16 +4,16 @@ import "./style.css";
 import { Router } from "react-router-dom";
 import history from "./history";
 import App from "./App";
-import ContextProvider from "./Context";
+import AuthProvider from "./contexts/auth";
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
 ReactDOM.render(
-  <ContextProvider>
+  <AuthProvider>
     <Router history={history}>
       <App />
     </Router>
-  </ContextProvider>,
+  </AuthProvider>,
   document.getElementById("app")
 );
