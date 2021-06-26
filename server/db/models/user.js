@@ -18,6 +18,11 @@ const User = db.define("users", {
   password: {
     type: Sequelize.STRING,
   },
+  userStatus: {
+    type: Sequelize.ENUM,
+    values: ['admin', 'user'],
+    defaultValue: 'user'
+  }
 });
 
 module.exports = User;

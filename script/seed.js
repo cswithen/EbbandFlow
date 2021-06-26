@@ -1,12 +1,19 @@
 'use strict'
 
 const {db } = require('../server/db')
-const {User} = require('../server/db/models')
+const {User, Pose} = require('../server/db/models')
+const posesData = require('./poses.json')
 
 async function seed() {
   await db.sync({force: true})
   console.log('db synced!')
 
+  const poses = await Promise.all(
+    posesData.map((pose) => Pose.create({
+      name: pose.name,
+      nameSanskrit: pose.nameSanskrit
+    }))
+  )
 
   const users = await Promise.all([
     User.create({ username: 'cody', password: '123'}),
@@ -14,6 +21,7 @@ async function seed() {
   ])
 
   console.log(`seeded ${users.length} users`)
+  console.log(`seeded ${poses.length} poses`)
   console.log(`seeded successfully`)
   return {
     users: {
@@ -22,6 +30,8 @@ async function seed() {
     }
   }
 }
+
+
 
 async function runSeed() {
   console.log('seeding...')
