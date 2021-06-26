@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { connect } from "react-redux";
 import { withRouter, Route, Switch, Redirect} from "react-router-dom";
-import { Login, Signup } from "./components/AuthForm";
-import Home from "./components/Home";
+import Login from "./components/AuthForm";
+import Home from "./components/LandingPage";
 // import { me } from "./store";
 
 export default class Routes extends Component {
@@ -17,6 +16,7 @@ export default class Routes extends Component {
       <div>
           <Switch>
             <Route path="/home" component={Home} />
+            <Route path="/login" component={Login} />
             <Redirect to="/home" />
           </Switch>
       </div>

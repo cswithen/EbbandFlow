@@ -1,62 +1,71 @@
-// import React from 'react'
-// import {connect} from 'react-redux'
-// import {authenticate} from '../store'
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../contexts/auth";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
 
-// const AuthForm = props => {
-//   const {name, displayName, handleSubmit, error} = props
+const Login = () => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorLogin, setErrorLogin] = useState("");
 
-//   return (
-//     <div>
-//       <form onSubmit={handleSubmit} name={name}>
-//         <div>
-//           <label htmlFor="username">
-//             <small>Username</small>
-//           </label>
-//           <input name="username" type="text" />
-//         </div>
-//         <div>
-//           <label htmlFor="password">
-//             <small>Password</small>
-//           </label>
-//           <input name="password" type="password" />
-//         </div>
-//         <div>
-//           <button type="submit">{displayName}</button>
-//         </div>
-//         {error && error.response && <div>{error.response.data}</div>}
-//       </form>
-//     </div>
-//   )
-// }
+  let history = useHistory();
 
+  // using setUser method from AuthProvider
+  const { setUser } = useContext(AuthContext);
 
-// const mapLogin = state => {
-//   return {
-//     name: 'login',
-//     displayName: 'Login',
-//     error: state.auth.error
-//   }
-// }
+  const authenticateUser = async (event) => {
+    event.preventDefault();
+    let res;
+    try {
+      res = await axios.post(`/auth/login`, {
+        username,
+        password,
+      });
+    } catch (error) {
+      console.log(error);
+      setErrorLogin(error);
+    }
 
-// const mapSignup = state => {
-//   return {
-//     name: 'signup',
-//     displayName: 'Sign Up',
-//     error: state.auth.error
-//   }
-// }
+    const user = res.data;
+    try {
+      setUser(user);
+      history.push("/home");
+    } catch (error) {
+      console.log(error);
+      setErrorLogin(error);
+    }
+  };
 
-// const mapDispatch = dispatch => {
-//   return {
-//     handleSubmit(event) {
-//       event.preventDefault()
-//       const formName = event.target.name
-//       const username = event.target.username.value
-//       const password = event.target.password.value
-//       dispatch(authenticate(username, password, formName))
-//     }
-//   }
-// }
+  return (
+    <div className="loginContainer">
+      <form onSubmit={authenticateUser}>
+        <div>
+          <label htmlFor="username">
+            <small>Username</small>
+          </label>
+          <input
+            name="username"
+            type="text"
+            onChange={(event) => setUsername(event.target.value)}
+          />
+          <label htmlFor="password">
+            <small>Password</small>
+          </label>
+          <input
+            name="password"
+            type="text"
+            onChange={(event) => setPassword(event.target.value)}
+          />
+        </div>
+        <div>
+          <button type="submit">Login</button>
+        </div>
+        {errorLogin && errorLogin.response && (
+          <div>{errorLogin.response.data}</div>
+        )}
+      </form>
+    </div>
+  );
+};
 
-// export const Login = connect(mapLogin, mapDispatch) (AuthForm)
-// export const Signup = connect(mapSignup, mapDispatch) (AuthForm)
+export default Login

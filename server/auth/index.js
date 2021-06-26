@@ -44,10 +44,6 @@ router.post('/logout', (req,  res) => {
 })
 
 //GET auth/me
-router.get("/me", async (req, res, next) => {
-  try {
-    res.send(await User.findByToken(req.headers.authorization));
-  } catch (error) {
-    next(error);
-  }
+router.get("/me", async (req, res) => {
+ res.json(req.user)
 });

@@ -1,34 +1,63 @@
-import React from 'react'
-import {connect} from 'react-redux'
-import {Link} from 'react-router-dom'
-// import {logout} from '../store'
+import axios from "axios";
+import React, { useContext } from "react";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../contexts/auth";
 
-const Navbar = () => (
-  <div>
-    <h1>HomePage</h1>
-    <nav>
+const NavLink = ({ name, path }) => {
+  return (
+    <Link to={path} className="navLink">
+      {name}
+    </Link>
+  );
+};
+
+const Navbar = () => {
+  const { user, setUser } = useContext(AuthContext);
+
+  const links = [
+    {
+      id: 1,
+      name: "Login",
+      path: "/login",
+    },
+    {
+      id: 2,
+      name: "Sign Up",
+      path: "/signup",
+    },
+  ];
+
+  const logout = async () => {
+    try {
+      await axios.post("/auth/logout");
+      setUser({});
+      history.push("/");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <div>
+      <h1>HomePage</h1>
+      <nav>
+        <Link to="/">
+          <div className="logo">
+            <span>Home</span>
+          </div>
+        </Link>
         <div>
-          <Link to="/login">Login</Link>
-          <Link to="/signup">Sign Up</Link>
+          {links.map((link) => (
+            <NavLink key={link.id} {...link} />
+          ))}
         </div>
+        <a href="#" className="navLink" onClick={logout}>
+          Logout
+        </a>
+      </nav>
+      <hr />
+    </div>
+  );
+};
 
-    </nav>
-    <hr />
-  </div>
-)
-
-// const mapState = state => {
-//   return {
-//     isLoggedIn: !!state.auth.id
-//   }
-// }
-
-// const mapDispatch = dispatch => {
-//   return {
-//     handleClick() {
-//       dispatch(logout())
-//     }
-//   }
-// }
-
-export default  (Navbar)
+export default Navbar;

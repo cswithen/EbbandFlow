@@ -70,7 +70,7 @@ const generateApp = () => {
     res.sendFile(path.join(__dirname, "..", "public/index.html"));
   });
 
-  app.use(function (error, req, res, next) {
+  app.use(function (error, req, res) {
     console.error(error);
     console.error(error.stack);
     res
