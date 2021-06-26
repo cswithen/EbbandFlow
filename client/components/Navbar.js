@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { AuthContext } from "../contexts/auth";
 
 const NavLink = ({ name, path }) => {
@@ -14,7 +14,9 @@ const NavLink = ({ name, path }) => {
 const Navbar = () => {
   const { user, setUser } = useContext(AuthContext);
 
-  const links = [
+  let history = useHistory();
+
+  const linksForLoggedOut = [
     {
       id: 1,
       name: "Login",
@@ -24,6 +26,14 @@ const Navbar = () => {
       id: 2,
       name: "Sign Up",
       path: "/signup",
+    },
+  ];
+
+  const linksForLoggedIn = [
+    {
+      id: 1,
+      name: "Sequences",
+      path: "/sequences",
     },
   ];
 
@@ -47,13 +57,21 @@ const Navbar = () => {
           </div>
         </Link>
         <div>
-          {links.map((link) => (
-            <NavLink key={link.id} {...link} />
-          ))}
+          {!user.id &&
+            linksForLoggedOut.map((link) => (
+              <NavLink key={link.id} {...link} />
+            ))}
+          {user.id && (
+            <div>
+              {linksForLoggedIn.map((link) => (
+              <NavLink key={link.id} {...link} />
+              ))}
+              <a href="#" className="navLink" onClick={logout}>
+                Logout
+              </a>
+            </div>
+          )}
         </div>
-        <a href="#" className="navLink" onClick={logout}>
-          Logout
-        </a>
       </nav>
       <hr />
     </div>

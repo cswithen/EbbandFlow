@@ -8,10 +8,11 @@ export const LandingPage = () => {
   const {user} = useContext(AuthContext)
 
   const [username, setUsername] = useState('')
+  console.log(user, username)
 
   return (
     <div>
-      <h3>Welcome, {username}</h3>
+      <h3>Welcome, {user.username}</h3>
     </div>
   );
 };

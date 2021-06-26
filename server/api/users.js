@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {models: {User}} = require('../db')
+const { User } = require('../db/models')
 const {adminCheck, userCheck} = require ('./authentication/authentication')
 
 //GET all users  '/api/users/'
