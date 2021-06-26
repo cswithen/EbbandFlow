@@ -1,41 +1,29 @@
-import React, { Component } from "react";
-import { withRouter, Route, Switch, Redirect} from "react-router-dom";
+import React, { useContext } from "react";
+import { withRouter, Route, Switch, Redirect } from "react-router-dom";
 import Login from "./components/AuthForm";
-import Home from "./components/LandingPage";
-// import { me } from "./store";
+import LandingPage from "./components/LandingPage";
+import { AuthContext } from "./contexts/auth";
 
-export default class Routes extends Component {
-  // componentDidMount() {
-  //   this.props.loadInitialData();
-  // }
+const Routes = () => {
+  const { user } = useContext(AuthContext);
 
-  render() {
-    // const { isLoggedIn } = this.props;
+  return (
+    <div>
+      {user && !user.id && (
+      <Switch>
+        <Route exact path="/" component={LandingPage} />
+        <Route path="/login" component={Login} />
+        {/* <Redirect to="/" /> */}
+      </Switch>
+      )}
 
-    return (
-      <div>
-          <Switch>
-            <Route path="/home" component={Home} />
-            <Route path="/login" component={Login} />
-            <Redirect to="/home" />
-          </Switch>
-      </div>
-    );
-  }
-}
+      {user.id && (
+        <Switch>
+          <Route exact path="/" component={LandingPage} />
+        </Switch>
+      )}
+    </div>
+  );
+};
 
-// const mapState = (state) => {
-//   return {
-//     isLoggedIn: !!state.auth.id,
-//   };
-// };
-
-// const mapDispatch = (dispatch) => {
-//   return {
-//     loadInitialData() {
-//       dispatch(me());
-//     },
-//   };
-// };
-
-// export default withRouter(connect(mapState, mapDispatch)(Routes));
+export default Routes

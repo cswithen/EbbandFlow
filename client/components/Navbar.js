@@ -20,20 +20,25 @@ const Navbar = () => {
     {
       id: 1,
       name: "Login",
-      path: "/login",
+      to: "/login",
     },
     {
       id: 2,
       name: "Sign Up",
-      path: "/signup",
+      to: "/signup",
     },
   ];
 
   const linksForLoggedIn = [
     {
       id: 1,
-      name: "Sequences",
-      path: "/sequences",
+      name: `${user.username}`,
+      to: "/profile",
+    },
+    {
+      id: 2,
+      name: "myworkouts",
+      to: "/myworkouts",
     },
   ];
 
@@ -56,15 +61,30 @@ const Navbar = () => {
             <span>Home</span>
           </div>
         </Link>
+        <Link to="/workouts">
+          <div className="logo">
+            <span>Workouts</span>
+          </div>
+        </Link>
+        <Link to="/poses">
+          <div className="logo">
+            <span>Poses</span>
+          </div>
+        </Link>
+        {/* {user.id && <NavLink to="/myworkouts" name="My Workouts" />} */}
         <div>
           {!user.id &&
             linksForLoggedOut.map((link) => (
-              <NavLink key={link.id} {...link} />
+              <Link key={link.id} {...link}>
+                {link.name}
+              </Link>
             ))}
           {user.id && (
             <div>
               {linksForLoggedIn.map((link) => (
-              <NavLink key={link.id} {...link} />
+                <Link key={link.id} {...link}>
+                  {link.name}
+                </Link>
               ))}
               <a href="#" className="navLink" onClick={logout}>
                 Logout
