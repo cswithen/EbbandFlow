@@ -4,12 +4,51 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../contexts/auth";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { PosesContext } from "../contexts/posesContext";
+import styled from "styled-components";
+
+const Container = styled.div`
+  margin: 8px;
+  border: 1px solid lightgrey;
+  border-radius: 2px;
+`;
+const Title = styled.h3`
+  padding: 8px;
+`;
+const TaskList = styled.div`
+  padding: 8px;
+  transition: background-color 0.2s ease;
+  background-color: ${(props) =>
+    props.isDraggingOver ? "#639cbf" : "#f2ebec"};
+`;
+
+const PoseContainer = styled.div`
+  margin-bottom: 8px;
+  border: 1px solid lightgrey;
+  border-radius: 2px;
+  padding: 8px;
+  background-color: ${(props) => (props.isDragging ? "#d99379" : "#f2ebec")};
+`;
+
+const Button = styled.button`
+background: ${props => props.primary ? '#639cbf' : '#d99379' };
+color: ${props => props.primary ? '#f2ebec' : '#1e403c' };
+
+font-size: 1em;
+margin: 0.25em;
+padding: 0.25em 0.25em;
+border: 0px solid ${props => props.primary ? '#f2ebec' : '' };
+border-radius: 3px;
+`
 
 const EditWorkout = ({ match }) => {
   const workoutId = +match.params.workoutId;
 
   const [workout, setWorkout] = useState({});
   const [workoutList, setWorkoutList] = useState([]);
+
+  const [name, setName] = useState("");
+  const [spotify, setSpotify] = useState("");
+
   const [toggle, setToggle] = useState(true);
 
   const { poses } = useContext(PosesContext);
@@ -22,6 +61,9 @@ const EditWorkout = ({ match }) => {
       try {
         const { data } = await axios.get(`/api/workouts/${workoutId}`);
         setWorkout(data);
+
+        const name = data.name;
+        const spotify = data.spotifyUrl;
         const poses = data.poses;
         poses.sort(
           (firstPose, secondPose) =>
@@ -29,6 +71,8 @@ const EditWorkout = ({ match }) => {
             secondPose.workout_poses.poseOrder
         );
         setWorkoutList(poses);
+        setName(name);
+        setSpotify(spotify);
       } catch (error) {
         console.error(error);
       }
@@ -75,7 +119,11 @@ const EditWorkout = ({ match }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await axios.put(`/api/workouts/${workoutId}`, workoutList);
+    await axios.put(`/api/workouts/${workoutId}`, {
+      name,
+      spotify,
+      workoutList,
+    });
     setToggle(!toggle);
   };
 
@@ -93,46 +141,87 @@ const EditWorkout = ({ match }) => {
     }
     const idx = getIndexOf(poses, event.target.name);
 
-    await axios.put(`/api/workouts/${workoutId}`, [poses[idx]]);
+    await axios.put(`/api/workouts/${workoutId}`, {
+      name,
+      spotify,
+      workoutList: [poses[idx]],
+    });
 
-    tempWorkoutList.push(poses[idx]);
+    const intermediate = poses[idx];
+
+    tempWorkoutList.push(intermediate);
     setWorkoutList(tempWorkoutList);
     setToggle(!toggle);
   };
 
   return (
     <div>
-      <h1>{workout.name}</h1>
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="1">
-          {(provided) => (
-            <div ref={provided.innerRef} {...provided.droppableProps}>
-              {workoutList.map((pose, index) => (
-                <Draggable key={pose.id} draggableId={pose.name} index={index}>
-                  {(provided) => (
-                    <div
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                      ref={provided.innerRef}
+      <section>
+        <form>
+          <div>
+            <label htmlFor="sequenceName">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="spotifyUrl">Spotify Url</label>
+            <input
+              type="text"
+              value={spotify}
+              onChange={(event) => setSpotify(event.target.value)}
+            />
+          </div>
+        </form>
+        <Container>
+          <Title>{workout.name}</Title>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="1">
+              {(provided, snapshot) => (
+                <TaskList
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  isDraggingOver={snapshot.isDraggingOver}
+                >
+                  {workoutList.map((pose, index) => (
+                    <Draggable
                       key={pose.id}
+                      draggableId={pose.name}
+                      index={index}
                     >
-                      {pose.name}
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
-      <button onClick={handleSubmit}>Submit</button>
-      <h2>Add Some More </h2>
-      {poses.map((pose) => (
-        <button key={pose.id} name={pose.name} onClick={handleClick}>
-          {pose.name}
-        </button>
-      ))}
+                      {(provided, snapshot) => (
+                        <PoseContainer
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          ref={provided.innerRef}
+                          isDragging={snapshot.isDragging}
+                          key={pose.id}
+                        >
+                          {index + 1}
+                          {". "}
+                          {pose.name}
+                        </PoseContainer>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </TaskList>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </Container>
+        <Button type="submit" onClick={handleSubmit} primary>
+          Submit
+        </Button>
+        <h2>Add Some More </h2>
+        {poses.map((pose) => (
+          <Button key={pose.id} name={pose.name} onClick={handleClick}>
+            {pose.name}
+          </Button>
+        ))}
+      </section>
     </div>
   );
 };

@@ -1,4 +1,23 @@
+
 body {
-  color: #1e403c;
-  background-color: #f2ebec;
+  font-family: 'Montserrat', sans-serif;
+  color: #1e403c
+}
+
+a {
+  text-decoration: none;
+}
+
+label {
+  display: block;
+}
+
+nav a {
+  display: inline-block;
+  margin: 1em;
+}
+
+form div {
+  margin: 1em;
+  display: inline-block;
 }

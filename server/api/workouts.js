@@ -47,7 +47,7 @@ router.get("/me", userCheck, async (req, res, next) => {
           attributes: { exclude: ["createdAt", "updatedAt"] },
           through: {
             attributes: {
-              exclude: ["createdAt", "updatedAt"],
+              exclude: ["updatedAt"],
             },
           },
         },
@@ -63,28 +63,38 @@ router.get("/me", userCheck, async (req, res, next) => {
 //POST single User create new '/api/workouts/me'
 router.post("/me", userCheck, async (req, res, next) => {
   try {
-    const userId = req.session.passport.user
+    const userId = req.session.passport.user;
     const newWorkout = await Workout.create({
-      name: "changeName"
-    })
-    const user = await User.findByPk(userId)
+      name: "changeName",
+    });
+    const user = await User.findByPk(userId);
 
-    newWorkout.setUser(user)
+    newWorkout.setUser(user);
 
-    res.json(newWorkout).status(201)
+    res.json(newWorkout).status(201);
   } catch (error) {
-    next(error)
+    next(error);
   }
-})
+});
 
 //PUT update single users's workout `/api/workouts/:workoutId
 router.put("/:workoutId", userCheck, async (req, res, next) => {
   try {
     const { workoutId } = req.params;
-    const workout = req.body;
-    const responseData = []
+    const { workoutList } = req.body;
+    const { name } = req.body;
+    const { spotify } = req.body;
+    const responseData = [];
 
-    workout.map(async (pose, index) => {
+    console.log(req.body.workoutList);
+
+    const workoutVal = await Workout.findByPk(workoutId);
+    await workoutVal.update({
+      name: name,
+      spotifyUrl: spotify,
+    });
+
+    workoutList.map(async (pose, index) => {
       const poseId = pose.id;
       const instance = await WorkoutPoses.findOrCreate({
         where: {
@@ -92,14 +102,14 @@ router.put("/:workoutId", userCheck, async (req, res, next) => {
           workoutId: Number(workoutId),
         },
       });
-      const instanceAt = instance[0]
+      const instanceAt = instance[0];
       await instanceAt.update({
         poseOrder: index,
       });
-      const {dataValues} = await Pose.findByPk(poseId)
-      responseData.push(dataValues)
+      const { dataValues } = await Pose.findByPk(poseId);
+      responseData.push(dataValues);
     });
-    res.send(responseData)
+    res.send(responseData);
   } catch (error) {
     next(error);
   }
@@ -119,7 +129,7 @@ router.get("/:workoutId", async (req, res, next) => {
           attributes: { exclude: ["createdAt", "updatedAt"] },
           through: {
             attributes: {
-              exclude: ["createdAt", "updatedAt"],
+              exclude: ["updatedAt"],
             },
           },
         },

@@ -6,6 +6,9 @@ router.get("/", async (req, res, next) => {
   try {
     const poses = await Pose.findAll({
       attributes: ["id", "name", "nameSanskrit"],
+      through: {
+        exclude: ["updatedAt"]
+      }
     });
     if (!poses) {
       return res.status(404).send("Poses not found in database");

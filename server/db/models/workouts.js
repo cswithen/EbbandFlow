@@ -10,7 +10,9 @@ const Workout = db.define("workouts", {
     }
   },
   spotifyUrl: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING,
+    allowNull: false,
+    defaultValue: ""
   }
 })
 
