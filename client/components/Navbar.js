@@ -20,11 +20,27 @@ const NavContainer = styled.nav`
   align-items: center;
 `;
 
+const Button = styled.button`
+  cursor: pointer;
+  background: ${(props) => (props.primary ? "#639cbf" : "#d99379")};
+  color: ${(props) => (props.primary ? "#f2ebec" : "#f2ebec")};
+
+  font-size: 1em;
+  margin: 0.25em;
+  padding: 0.25em 0.25em;
+  border: 0px solid ${(props) => (props.primary ? "#FFFFFF" : "")};
+  border-radius: 3px;
+  transition: 0.5s all ease-out;
+
+  &:hover {
+    color: #735449;
+    background-color: ${(props) => (props.primary ? "#ffffff" : "#ffffff")}
+`;
+
 const linkStyle = {
   textDecoration: "none",
-  color: '#1e403c'
-}
-
+  color: "#1e403c",
+};
 
 const NavLink = ({ name, path }) => {
   return (
@@ -45,11 +61,11 @@ const Navbar = () => {
       name: "Login",
       to: "/login",
     },
-    {
-      id: 2,
-      name: "Sign Up",
-      to: "/signup",
-    },
+    // {
+    //   id: 2,
+    //   name: "Sign Up",
+    //   to: "/signup",
+    // },
   ];
 
   const linksForLoggedIn = [
@@ -78,7 +94,7 @@ const Navbar = () => {
   return (
     <div>
       <NavContainer>
-      <h1>HomePage</h1>
+        <h1>HomePage</h1>
         <div>
           <Link to="/" style={linkStyle}>
             <div className="logo">
@@ -98,12 +114,23 @@ const Navbar = () => {
         </div>
         {/* {user.id && <NavLink to="/myworkouts" name="My Workouts" />} */}
         <div>
-          {!user.id &&
-            linksForLoggedOut.map((link) => (
-              <Link key={link.id} {...link} style={linkStyle}>
-                {link.name}
-              </Link>
-            ))}
+          {!user.id && (
+            <div>
+              {linksForLoggedOut.map((link) => (
+                <Link key={link.id} {...link} style={linkStyle}>
+                  {link.name}
+                </Link>
+              ))}
+              <Button
+                as="a"
+                href="/signup"
+                className="navLink"
+                primary
+              >
+                Sign Up
+              </Button>
+            </div>
+          )}
           {user.id && (
             <div>
               {linksForLoggedIn.map((link) => (
@@ -111,9 +138,14 @@ const Navbar = () => {
                   {link.name}
                 </Link>
               ))}
-              <a href="#" className="navLink" onClick={logout} style={linkStyle}>
+              <Button
+                as="a"
+                href="#"
+                className="navLink"
+                onClick={logout}
+              >
                 Logout
-              </a>
+              </Button>
             </div>
           )}
         </div>
