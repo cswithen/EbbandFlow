@@ -1,14 +1,17 @@
-import React from 'react';
-import Navbar from './components/Navbar'
-import Routes from './Routes'
+import React from "react";
+import Navbar from "./components/Navbar";
+import PosesProvider from "./contexts/posesContext";
+import Routes from "./Routes";
 
 const App = () => {
   return (
     <div>
       <Navbar />
-      <Routes />
+      <PosesProvider>
+        <Routes />
+      </PosesProvider>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;

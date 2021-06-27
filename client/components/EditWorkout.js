@@ -3,15 +3,16 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../contexts/auth";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { PosesContext } from "../contexts/posesContext";
 
 const EditWorkout = ({ match }) => {
   const workoutId = +match.params.workoutId;
 
-  console.log(workoutId);
-
   const [workout, setWorkout] = useState({});
   const [workoutList, setWorkoutList] = useState([]);
+  const [toggle, setToggle] = useState(true);
 
+  const { poses } = useContext(PosesContext);
   const { setUser } = useContext(AuthContext);
 
   useEffect(() => {
@@ -21,7 +22,13 @@ const EditWorkout = ({ match }) => {
       try {
         const { data } = await axios.get(`/api/workouts/${workoutId}`);
         setWorkout(data);
-        setWorkoutList(data.poses);
+        const poses = data.poses;
+        poses.sort(
+          (firstPose, secondPose) =>
+            firstPose.workout_poses.poseOrder -
+            secondPose.workout_poses.poseOrder
+        );
+        setWorkoutList(poses);
       } catch (error) {
         console.error(error);
       }
@@ -31,14 +38,7 @@ const EditWorkout = ({ match }) => {
     return () => {
       isMounted = false;
     };
-  }, []);
-
-  if (workoutList.id) {
-    workoutList.sort(
-      (firstPose, secondPose) =>
-        firstPose.workout_poses.poseOrder - secondPose.workout_poses.poseOrder
-    );
-  }
+  }, [toggle]);
 
   const onDragEnd = (result) => {
     const { destination, source, draggableId } = result;
@@ -73,10 +73,37 @@ const EditWorkout = ({ match }) => {
     setWorkoutList(tempWorkoutList);
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    await axios.put(`/api/workouts/${workoutId}`, workoutList);
+    setToggle(!toggle);
+  };
+
+  const handleClick = async (event) => {
+    event.preventDefault();
+    const tempWorkoutList = workoutList;
+
+    function getIndexOf(array, value) {
+      for (let i = 0; i < array.length; i++) {
+        if (array[i].name === value) {
+          return i;
+        }
+      }
+      return -1;
+    }
+    const idx = getIndexOf(poses, event.target.name);
+
+    await axios.put(`/api/workouts/${workoutId}`, [poses[idx]]);
+
+    tempWorkoutList.push(poses[idx]);
+    setWorkoutList(tempWorkoutList);
+    setToggle(!toggle);
+  };
+
   return (
     <div>
+      <h1>{workout.name}</h1>
       <DragDropContext onDragEnd={onDragEnd}>
-        <h1>{workout.name}</h1>
         <Droppable droppableId="1">
           {(provided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
@@ -99,6 +126,13 @@ const EditWorkout = ({ match }) => {
           )}
         </Droppable>
       </DragDropContext>
+      <button onClick={handleSubmit}>Submit</button>
+      <h2>Add Some More </h2>
+      {poses.map((pose) => (
+        <button key={pose.id} name={pose.name} onClick={handleClick}>
+          {pose.name}
+        </button>
+      ))}
     </div>
   );
 };

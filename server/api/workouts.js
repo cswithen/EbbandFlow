@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { async } = require("regenerator-runtime");
-const { Workout, Pose, User } = require("../db/models/index");
+const { Workout, Pose, User, WorkoutPoses } = require("../db/models/index");
 const { userCheck } = require("./authentication/authentication");
 
 //GET all workouts '/api/workouts/'
@@ -55,6 +55,51 @@ router.get("/me", userCheck, async (req, res, next) => {
     });
 
     return res.json(workouts);
+  } catch (error) {
+    next(error);
+  }
+});
+
+//POST single User create new '/api/workouts/me'
+router.post("/me", userCheck, async (req, res, next) => {
+  try {
+    const userId = req.session.passport.user
+    const newWorkout = await Workout.create({
+      name: "changeName"
+    })
+    const user = await User.findByPk(userId)
+
+    newWorkout.setUser(user)
+
+    res.json(newWorkout).status(201)
+  } catch (error) {
+    next(error)
+  }
+})
+
+//PUT update single users's workout `/api/workouts/:workoutId
+router.put("/:workoutId", userCheck, async (req, res, next) => {
+  try {
+    const { workoutId } = req.params;
+    const workout = req.body;
+    const responseData = []
+
+    workout.map(async (pose, index) => {
+      const poseId = pose.id;
+      const instance = await WorkoutPoses.findOrCreate({
+        where: {
+          poseId: poseId,
+          workoutId: Number(workoutId),
+        },
+      });
+      const instanceAt = instance[0]
+      await instanceAt.update({
+        poseOrder: index,
+      });
+      const {dataValues} = await Pose.findByPk(poseId)
+      responseData.push(dataValues)
+    });
+    res.send(responseData)
   } catch (error) {
     next(error);
   }
