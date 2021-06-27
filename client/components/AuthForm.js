@@ -70,7 +70,7 @@ const Login = () => {
     const user = res.data;
     try {
       setUser(user);
-      history.push("/home");
+      history.push("/");
     } catch (error) {
       console.log(error);
       setErrorLogin(error);
