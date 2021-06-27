@@ -38,7 +38,7 @@ const Navbar = () => {
     {
       id: 2,
       name: "myworkouts",
-      to: "/myworkouts",
+      to: "/me/workouts/",
     },
   ];
 

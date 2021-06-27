@@ -3,6 +3,7 @@ const { User } = require("../../db/models");
 const userCheck = async (req, res, next) => {
   if (req.session.passport) {
     const reqId = req.session.passport.user;
+    console.log(reqId)
     const user = await User.findByPk(reqId);
 
     if ((user && user.id === reqId) || (user && user.status === "admin")) {

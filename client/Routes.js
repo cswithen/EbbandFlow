@@ -4,10 +4,9 @@ import Login from "./components/AuthForm";
 import Poses from "./components/Poses"
 import Signup from "./components/Signup"
 import LandingPage from "./components/LandingPage";
-import AllWorkouts from "./components/AllWorkouts";
-import SingleWorkout from "./components/SingleWorkout";
 import Workouts from "./components/Workouts";
 import { AuthContext } from "./contexts/auth";
+import MyWorkouts from "./components/MyWorkouts";
 
 const Routes = () => {
   const { user } = useContext(AuthContext);
@@ -28,8 +27,9 @@ const Routes = () => {
       {user.id && (
         <Switch>
           <Route exact path="/" component={LandingPage} />
-          <Route exact path="/workouts" component={Workouts} />
+          <Route path="/workouts" component={Workouts} />
           <Route path="/poses" component={Poses} />
+          <Route path="/me/workouts/" component={MyWorkouts} />
         </Switch>
       )}
     </div>
