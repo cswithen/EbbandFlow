@@ -2,6 +2,29 @@ import axios from "axios";
 import React, { useContext } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { AuthContext } from "../contexts/auth";
+import styled from "styled-components";
+
+// const BigContainer = styled.div`
+//   // display: flex;
+//   // flex-direction: row;
+//   // justify-content: space-between;
+// `;
+
+const NavContainer = styled.nav`
+  margin: 8px;
+  flex: 2 0 auto;
+  flex-direction: row;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const linkStyle = {
+  textDecoration: "none",
+  color: '#1e403c'
+}
+
 
 const NavLink = ({ name, path }) => {
   return (
@@ -30,14 +53,14 @@ const Navbar = () => {
   ];
 
   const linksForLoggedIn = [
-    {
-      id: 1,
-      name: `${user.username}`,
-      to: "/profile",
-    },
+    // {
+    //   id: 1,
+    //   name: `${user.username}`,
+    //   to: "/profile",
+    // },
     {
       id: 2,
-      name: "myworkouts",
+      name: "My Workouts",
       to: "/me/workouts/",
     },
   ];
@@ -54,46 +77,47 @@ const Navbar = () => {
 
   return (
     <div>
+      <NavContainer>
       <h1>HomePage</h1>
-      <nav>
-        <Link to="/">
-          <div className="logo">
-            <span>Home</span>
-          </div>
-        </Link>
-        <Link to="/workouts">
-          <div className="logo">
-            <span>Workouts</span>
-          </div>
-        </Link>
-        <Link to="/poses">
-          <div className="logo">
-            <span>Poses</span>
-          </div>
-        </Link>
+        <div>
+          <Link to="/" style={linkStyle}>
+            <div className="logo">
+              <span>Home</span>
+            </div>
+          </Link>
+          <Link to="/workouts" style={linkStyle}>
+            <div className="logo">
+              <span>Workouts</span>
+            </div>
+          </Link>
+          <Link to="/poses" style={linkStyle}>
+            <div className="logo">
+              <span>Poses</span>
+            </div>
+          </Link>
+        </div>
         {/* {user.id && <NavLink to="/myworkouts" name="My Workouts" />} */}
         <div>
           {!user.id &&
             linksForLoggedOut.map((link) => (
-              <Link key={link.id} {...link}>
+              <Link key={link.id} {...link} style={linkStyle}>
                 {link.name}
               </Link>
             ))}
           {user.id && (
             <div>
               {linksForLoggedIn.map((link) => (
-                <Link key={link.id} {...link}>
+                <Link key={link.id} {...link} style={linkStyle}>
                   {link.name}
                 </Link>
               ))}
-              <a href="#" className="navLink" onClick={logout}>
+              <a href="#" className="navLink" onClick={logout} style={linkStyle}>
                 Logout
               </a>
             </div>
           )}
         </div>
-      </nav>
-      <hr />
+      </NavContainer>
     </div>
   );
 };
