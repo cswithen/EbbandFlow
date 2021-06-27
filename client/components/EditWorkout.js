@@ -40,7 +40,38 @@ const EditWorkout = ({ match }) => {
     );
   }
 
-  const onDragEnd = (result) => {};
+  const onDragEnd = (result) => {
+    const { destination, source, draggableId } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    function getIndexOf(array, value) {
+      for (let i = 0; i < array.length; i++) {
+        if (array[i].name === value) {
+          return i;
+        }
+      }
+      return -1;
+    }
+
+    const tempWorkoutList = workoutList;
+    const poseIdx = getIndexOf(tempWorkoutList, draggableId);
+    const intermediate = tempWorkoutList[poseIdx];
+
+    tempWorkoutList.splice(source.index, 1);
+    tempWorkoutList.splice(destination.index, 0, intermediate);
+
+    setWorkoutList(tempWorkoutList);
+  };
 
   return (
     <div>
