@@ -5,7 +5,11 @@ const User = require('./user')
 const Pose = require('./poses')
 const Workout = require('./workouts')
 
-const WorkoutPoses = db.define('workout_poses')
+const WorkoutPoses = db.define('workout_poses', {
+  poseOrder: {
+    type: Sequelize.INTEGER,
+  }
+})
 
 User.hasMany(Workout)
 Workout.belongsTo(User)

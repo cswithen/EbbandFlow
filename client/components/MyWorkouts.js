@@ -27,7 +27,7 @@ const MyWorkouts = () => {
 
   return (
     <div>
-      <h1>{user.username}</h1>
+      <h1>My Workouts</h1>
       {workouts.map((workout) => (
         <div key={workout.id}>
           <Link to={`/workouts/${workout.id}`}>{workout.name}</Link>
