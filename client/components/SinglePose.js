@@ -1,10 +1,8 @@
 import axios from "axios";
 import React, { useState, useContext, useEffect } from "react";
-import { PosesContext } from "../contexts/posesContext";
 
 const SinglePose = ({ match }) => {
   const poseId = +match.params.poseId;
-  const { poses } = useContext(PosesContext);
 
   const [pose, setPose] = useState({});
 
